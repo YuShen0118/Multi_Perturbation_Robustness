@@ -34,7 +34,7 @@ from numpy.random import default_rng
 from sys import platform
 from PIL import Image
 
-USE_KERAS = True
+USE_KERAS = False
 if USE_KERAS:
 	import keras
 	import tensorflow as tf
