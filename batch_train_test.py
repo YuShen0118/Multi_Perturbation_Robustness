@@ -409,7 +409,7 @@ if __name__ == "__main__":
 
 	parser.add_argument('--train_folder', type=str, default='trainB', choices=['trainB','trainHonda100k','trainAds','trainHc','trainWaymo'])
 	parser.add_argument('--val_folder', type=str, default='valB', choices=['valB','valHonda100k','valAds','valHc','valWaymo'])
-	parser.add_argument('--train_mode', type=str, default='ours', choices=['ours','base','maxup'])
+	parser.add_argument('--run_mode', type=str, default='train_ours', choices=['train_ours','train_base','train_maxup','test'])
 	parser.add_argument('--with_FFT', default=False, choices=[True, False])
 	parser.add_argument('--suffix', type=str, default='')
 	parser.add_argument('--dataset_root', type=str, default='./Data/')

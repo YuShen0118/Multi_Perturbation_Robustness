@@ -22,14 +22,14 @@ from PIL import Image
 IMG_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.ppm', '.bmp', '.pgm']
 
 # added by Laura 
-PLATFORM_ROOT = "/media/yushen/workspace2/projects/SAAP_Auto-driving_Platform/"
+# PLATFORM_ROOT = "/media/yushen/workspace2/projects/SAAP_Auto-driving_Platform/"
 # PLATFORM_ROOT = "C:/projects/SAAP_Auto-driving_Platform/Data/udacityA_nvidiaB"
-IMAGEW = 455
-IMAGEH = 256
-IMAGEW = 200
-IMAGEH = 66
-RESIZE_W = 200
-RESIZE_H = 66
+IMAGEW = 455 # original resolution
+IMAGEH = 256 # original resolution
+# IMAGEW = 200
+# IMAGEH = 66
+RESIZE_W = 455 # target resolution
+RESIZE_H = 256 # target resolution
 
 def is_image_file(filename):
     """Checks if a file is an image.
@@ -433,7 +433,7 @@ def frost(x, severity=1):
          (0.65, 0.7),
          (0.6, 0.75)][severity - 1]
     idx = np.random.randint(5)
-    filename = ['./frost1.png', './frost2.png', './frost3.png', './frost4.jpg', './frost5.jpg', './frost6.jpg'][idx]
+    filename = ['./Data/frost1.png', './Data/frost2.png', './Data/frost3.png', './Data/frost4.jpg', './Data/frost5.jpg', './Data/frost6.jpg'][idx]
     frost = cv2.imread(filename)
     # randomly crop and convert to rgb
     x_start, y_start = np.random.randint(0, frost.shape[0] - IMAGEH), np.random.randint(0, frost.shape[1] - IMAGEW)
@@ -612,11 +612,12 @@ def elastic_transform(image, severity=1):
 # /////////////// Further Setup ///////////////
 
 
-def save_distorted(method=gaussian_noise):
+def save_distorted(src_folder, method=gaussian_noise):
     for severity in range(1, 6):
         print(method.__name__, severity)
         distorted_dataset = DistortImageFolder(
-            root=os.path.join(PLATFORM_ROOT + "Data/udacityA_nvidiaB/valAudi6"),
+            # root=os.path.join(PLATFORM_ROOT + "Data/udacityA_nvidiaB/valAudi6"),
+            root=os.path.join(src_folder),
             method=method, severity=severity,
             transform=trn.Compose([trn.Resize((IMAGEH, IMAGEW))]))
         distorted_dataset_loader = torch.utils.data.DataLoader(
@@ -638,6 +639,23 @@ def save_distorted(method=gaussian_noise):
 
 
 # /////////////// End Further Setup ///////////////
+
+def driving_perturbations(src_folder):
+    import collections
+
+    d = collections.OrderedDict()
+    d['Motion Blur'] = motion_blur
+    d['Zoom Blur'] = zoom_blur
+    d['Snow'] = snow
+    d['Frost'] = frost
+    d['Fog'] = fog
+    d['Pixelate'] = pixelate
+    d['JPEG'] = jpeg_compression
+
+    for method_name in d.keys():
+        save_distorted(src_folder, d[method_name])
+
+
 
 
 # /////////////// Display Results ///////////////

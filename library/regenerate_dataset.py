@@ -8,6 +8,7 @@ import glob
 import os
 import csv
 import time
+from make_imagenet_c import driving_perturbations
 
 # Root directory of the project
 ROOT_DIR = os.path.abspath("../")
@@ -579,7 +580,7 @@ def generate_RGB_dataset(originalDataset, channel, direction, dist_ratio=0.25, s
         saveAsName = os.path.join(saveDir, os.path.basename(i))
 
         # added nov 10
-        image = cv2.resize(image, (IMG_WIDTH, IMG_HEIGHT))
+        # image = cv2.resize(image, (IMG_WIDTH, IMG_HEIGHT))
 
         cv2.imwrite(saveAsName, image)
 
@@ -649,7 +650,7 @@ def generate_HSV_datasets(originalDataset, channel, direction, dist_ratio=0.25, 
         saveAsName = os.path.join(saveDir, os.path.basename(i))
         
         # added nov 10
-        image = cv2.resize(image, (IMG_WIDTH, IMG_HEIGHT))
+        # image = cv2.resize(image, (IMG_WIDTH, IMG_HEIGHT))
         cv2.imwrite(saveAsName, image)
 
         # if image_id % 6000 == 0:
@@ -1048,7 +1049,7 @@ def generate_all_middle(originalDataset):
     # generate_middle_colors(originalDataset)
     # print('finished generating color middle datasets')
 
-def generate_all_color_levels(dataFolder, dataFolderVal, csvFile, csvFileVal):
+def generate_all_color_levels(dataFolder, csvFile=''):
     # train folder
     generate_RGB_dataset(dataFolder, 0, 4, dist_ratio=0.02, suffix='1', csv_file=csvFile)
     generate_RGB_dataset(dataFolder, 0, 5, dist_ratio=0.02, suffix='1', csv_file=csvFile)
@@ -1120,76 +1121,6 @@ def generate_all_color_levels(dataFolder, dataFolderVal, csvFile, csvFileVal):
     generate_HSV_datasets(dataFolder, 2, 4, dist_ratio=1, suffix='5', csv_file=csvFile)
     generate_HSV_datasets(dataFolder, 2, 5, dist_ratio=1, suffix='5', csv_file=csvFile)
     
-    # validation folder
-    generate_RGB_dataset(dataFolderVal, 0, 4, dist_ratio=0.02, suffix='1', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 0, 5, dist_ratio=0.02, suffix='1', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 1, 4, dist_ratio=0.02, suffix='1', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 1, 5, dist_ratio=0.02, suffix='1', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 2, 4, dist_ratio=0.02, suffix='1', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 2, 5, dist_ratio=0.02, suffix='1', csv_file=csvFileVal)
-
-    generate_HSV_datasets(dataFolderVal, 0, 4, dist_ratio=0.02, suffix='1', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 0, 5, dist_ratio=0.02, suffix='1', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 1, 4, dist_ratio=0.02, suffix='1', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 1, 5, dist_ratio=0.02, suffix='1', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 2, 4, dist_ratio=0.02, suffix='1', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 2, 5, dist_ratio=0.02, suffix='1', csv_file=csvFileVal)
-    
-    generate_RGB_dataset(dataFolderVal, 0, 4, dist_ratio=0.2, suffix='2', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 0, 5, dist_ratio=0.2, suffix='2', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 1, 4, dist_ratio=0.2, suffix='2', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 1, 5, dist_ratio=0.2, suffix='2', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 2, 4, dist_ratio=0.2, suffix='2', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 2, 5, dist_ratio=0.2, suffix='2', csv_file=csvFileVal)
-
-    generate_HSV_datasets(dataFolderVal, 0, 4, dist_ratio=0.2, suffix='2', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 0, 5, dist_ratio=0.2, suffix='2', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 1, 4, dist_ratio=0.2, suffix='2', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 1, 5, dist_ratio=0.2, suffix='2', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 2, 4, dist_ratio=0.2, suffix='2', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 2, 5, dist_ratio=0.2, suffix='2', csv_file=csvFileVal)
-    
-    generate_RGB_dataset(dataFolderVal, 0, 4, dist_ratio=0.5, suffix='3', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 0, 5, dist_ratio=0.5, suffix='3', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 1, 4, dist_ratio=0.5, suffix='3', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 1, 5, dist_ratio=0.5, suffix='3', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 2, 4, dist_ratio=0.5, suffix='3', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 2, 5, dist_ratio=0.5, suffix='3', csv_file=csvFileVal)
-
-    generate_HSV_datasets(dataFolderVal, 0, 4, dist_ratio=0.5, suffix='3', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 0, 5, dist_ratio=0.5, suffix='3', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 1, 4, dist_ratio=0.5, suffix='3', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 1, 5, dist_ratio=0.5, suffix='3', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 2, 4, dist_ratio=0.5, suffix='3', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 2, 5, dist_ratio=0.5, suffix='3', csv_file=csvFileVal)
-
-    generate_RGB_dataset(dataFolderVal, 0, 4, dist_ratio=0.65, suffix='4', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 0, 5, dist_ratio=0.65, suffix='4', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 1, 4, dist_ratio=0.65, suffix='4', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 1, 5, dist_ratio=0.65, suffix='4', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 2, 4, dist_ratio=0.65, suffix='4', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 2, 5, dist_ratio=0.65, suffix='4', csv_file=csvFileVal)
-
-    generate_HSV_datasets(dataFolderVal, 0, 4, dist_ratio=0.65, suffix='4', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 0, 5, dist_ratio=0.65, suffix='4', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 1, 4, dist_ratio=0.65, suffix='4', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 1, 5, dist_ratio=0.65, suffix='4', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 2, 4, dist_ratio=0.65, suffix='4', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 2, 5, dist_ratio=0.65, suffix='4', csv_file=csvFileVal)
-
-    generate_RGB_dataset(dataFolderVal, 0, 4, dist_ratio=1, suffix='5', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 0, 5, dist_ratio=1, suffix='5', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 1, 4, dist_ratio=1, suffix='5', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 1, 5, dist_ratio=1, suffix='5', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 2, 4, dist_ratio=1, suffix='5', csv_file=csvFileVal)
-    generate_RGB_dataset(dataFolderVal, 2, 5, dist_ratio=1, suffix='5', csv_file=csvFileVal)
-
-    generate_HSV_datasets(dataFolderVal, 0, 4, dist_ratio=1, suffix='5', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 0, 5, dist_ratio=1, suffix='5', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 1, 4, dist_ratio=1, suffix='5', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 1, 5, dist_ratio=1, suffix='5', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 2, 4, dist_ratio=1, suffix='5', csv_file=csvFileVal)
-    generate_HSV_datasets(dataFolderVal, 2, 5, dist_ratio=1, suffix='5', csv_file=csvFileVal)
 
     print('finished generating all color datasets')
 
@@ -1199,7 +1130,8 @@ def generate_all(code):
     dataFolderVal = os.path.join(dataset_path, "val" + code)
     csvFileVal = os.path.join(dataset_path, "labels" + code + "_val.csv")
 
-    generate_all_color_levels(dataFolder, dataFolderVal, csvFile, csvFileVal)
+    generate_all_color_levels(dataFolder, csvFile)
+    generate_all_color_levels(dataFolderVal, csvFileVal)
     generate_dataset_diff_quality(dataset_path, "train" + code)
     print("finished generating noise and blur for train" + code)
     generate_dataset_diff_quality(dataset_path, "val" + code)
@@ -1260,7 +1192,49 @@ def generate_folder_with_csv():
         cv2.imwrite(out_path, image)
 
 
+def generate_train_perturbations(src_folder):
+    generate_all_color_levels(src_folder) # R, G, B, H, S, V
+
+    dataset_path = os.path.dirname(src_folder) + '/'
+    folder = os.path.basename(src_folder)
+
+    generate_dataset_diff_quality(dataset_path, folder) # blur, noise
+    generate_dataset_distort(dataset_path, folder) # distortion
+
+
+def generate_test_perturbations(src_folder):
+    generate_all_color_levels(src_folder) # R, G, B, H, S, V
+
+    dataset_path = os.path.dirname(src_folder) + '/'
+    folder = os.path.basename(src_folder)
+
+    generate_dataset_diff_quality(dataset_path, folder) # blur, noise
+    generate_dataset_distort(dataset_path, folder) # distortion
+
+    # combined perturbation
+    generate_combined(src_folder, "1", parameter_file=os.path.join(dataset_path, "default_combined_perturbation_parameters/parameters1.txt"))
+    generate_combined(src_folder, "2", parameter_file=os.path.join(dataset_path, "default_combined_perturbation_parameters/parameters2.txt"))
+    generate_combined(src_folder, "3", parameter_file=os.path.join(dataset_path, "default_combined_perturbation_parameters/parameters3.txt"))
+    generate_combined(src_folder, "4", parameter_file=os.path.join(dataset_path, "default_combined_perturbation_parameters/parameters4.txt"))
+    generate_combined(src_folder, "5", parameter_file=os.path.join(dataset_path, "default_combined_perturbation_parameters/parameters5.txt"))
+    generate_combined(src_folder, "6", parameter_file=os.path.join(dataset_path, "default_combined_perturbation_parameters/parameters6.txt"))
+
+    # unseen perturbation
+    driving_perturbations(src_folder)
+    
+
 if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser(description='generate data')
+    parser.add_argument('--generation_mode', type=str, default='train', choices=['train','test'])
+    parser.add_argument('--src_folder', type=str, required=True)
+    args = parser.parse_args()
+
+    if args.generation_mode == 'train':
+        generate_train_perturbations(args.src_folder)
+    elif args.generation_mode == 'test':
+        generate_test_perturbations(args.src_folder)
+
     #print(__doc__)
     '''
     folderA = os.path.join(dataset_path, "trainA")
