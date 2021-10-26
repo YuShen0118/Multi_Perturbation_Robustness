@@ -360,7 +360,7 @@ def train_others(args):
 	withFFT = False
 
 	Maxup_flag = False
-	if args.train_mode == 'maxup':
+	if args.run_mode == 'maxup':
 		Maxup_flag = True
 
 	train_folder = args.train_folder
@@ -440,7 +440,7 @@ if __name__ == "__main__":
 	if not os.path.exists(TEST_OUTPUT_ROOT):
 		os.mkdir(TEST_OUTPUT_ROOT)
 
-	if args.train_mode == 'ours':
+	if args.run_mode == 'train_ours':
 		train_ours(args)
-	elif args.train_mode == 'base' or args.train_mode == 'maxup':
+	elif args.run_mode == 'train_base' or args.run_mode == 'train_maxup':
 		train_others(args)
