@@ -8,9 +8,9 @@ University of Maryland, College Park
 
 - Our results
 <p align='center'>
-  <img src='imgs/architecture.jpg' width='450'/>
-  <img src='imgs/samples_9factors.jpg' width='450'/>
-  <img src='imgs/unseen_factors.jpg' width='450'/>
+  <img src='imgs/architecture.jpg' width='600'/>
+  <img src='imgs/samples_9factors.jpg' width='600'/>
+  <img src='imgs/unseen_factors.jpg' width='600'/>
 </p>
 
 ## Prerequisites
