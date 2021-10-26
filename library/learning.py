@@ -353,7 +353,7 @@ class ToTensor(object):
 class DrivingDataset_pytorch(torch.utils.data.Dataset):
     """Face Landmarks dataset."""
 
-    def __init__(self, xTrainList, yTrainList, transform=None, withFFT=False):
+    def __init__(self, xTrainList, yTrainList, transform=None, withFFT=False, Maxup_flag=False):
         """
         Args:
             csv_file (string): Path to the csv file with annotations.
@@ -365,6 +365,8 @@ class DrivingDataset_pytorch(torch.utils.data.Dataset):
         self.yTrainList = yTrainList
         self.transform = transform
         self.withFFT = withFFT
+        self.Maxup_flag = Maxup_flag
+        self.rng = default_rng()
 
     def __len__(self):
         return len(self.yTrainList)
@@ -375,6 +377,35 @@ class DrivingDataset_pytorch(torch.utils.data.Dataset):
         img_paths = img_path
         if not isinstance(img_path, (list, tuple, np.ndarray)):
             img_paths = [img_path]
+
+        if self.Maxup_flag:
+            m=4
+
+            perturbations = np.array(["trainB", 
+                             "trainB_R_darker_1", "trainB_R_darker_2", "trainB_R_darker_3", "trainB_R_darker_4", "trainB_R_darker_5", 
+                             "trainB_G_darker_1", "trainB_G_darker_2", "trainB_G_darker_3", "trainB_G_darker_4", "trainB_G_darker_5", 
+                             "trainB_B_darker_1", "trainB_B_darker_2", "trainB_B_darker_3", "trainB_B_darker_4", "trainB_B_darker_5", 
+                             "trainB_H_darker_1", "trainB_H_darker_2", "trainB_H_darker_3", "trainB_H_darker_4", "trainB_H_darker_5", 
+                             "trainB_S_darker_1", "trainB_S_darker_2", "trainB_S_darker_3", "trainB_S_darker_4", "trainB_S_darker_5", 
+                             "trainB_V_darker_1", "trainB_V_darker_2", "trainB_V_darker_3", "trainB_V_darker_4", "trainB_V_darker_5", 
+                             "trainB_R_lighter_1", "trainB_R_lighter_2", "trainB_R_lighter_3", "trainB_R_lighter_4", "trainB_R_lighter_5",
+                             "trainB_G_lighter_1", "trainB_G_lighter_2", "trainB_G_lighter_3", "trainB_G_lighter_4", "trainB_G_lighter_5",
+                             "trainB_B_lighter_1", "trainB_B_lighter_2", "trainB_B_lighter_3", "trainB_B_lighter_4", "trainB_B_lighter_5",
+                             "trainB_H_lighter_1", "trainB_H_lighter_2", "trainB_H_lighter_3", "trainB_H_lighter_4", "trainB_H_lighter_5",
+                             "trainB_S_lighter_1", "trainB_S_lighter_2", "trainB_S_lighter_3", "trainB_S_lighter_4", "trainB_S_lighter_5",
+                             "trainB_V_lighter_1", "trainB_V_lighter_2", "trainB_V_lighter_3", "trainB_V_lighter_4", "trainB_V_lighter_5",
+                             "trainB_blur_1", "trainB_blur_2", "trainB_blur_3", "trainB_blur_4", "trainB_blur_5",
+                             "trainB_noise_1", "trainB_noise_2", "trainB_noise_3", "trainB_noise_4", "trainB_noise_5",
+                             "trainB_distort_1", "trainB_distort_2", "trainB_distort_3", "trainB_distort_4", "trainB_distort_5"])
+            tot_p = len(perturbations)
+            # pidx = random.randint(0,tot_p)
+            pidx = self.rng.choice(tot_p, size=m, replace=False)
+            # pidx=[0,0,0,0]
+            img_paths = []
+            for j in pidx:
+                new_train_folder = perturbations[j]
+                img_path1 = img_path.replace("trainB", new_train_folder)
+                img_paths.append(img_path1)
 
         # gt_value = np.random.rand()
         for i in range(len(img_paths)):
@@ -681,7 +712,7 @@ def train_dnn_multi(imageDir_list, labelPath_list, outputPath, netType, flags, s
 				# 	yuv_weight.transpose(0, 1)).permute(2, 0, 1)),
 				])
 
-			train_dataset = DrivingDataset_pytorch(xTrainList, yTrainList, transform=transform, withFFT=withFFT)
+			train_dataset = DrivingDataset_pytorch(xTrainList, yTrainList, transform=transform, withFFT=withFFT, Maxup_flag=Maxup_flag)
 			valid_dataset = DrivingDataset_pytorch(xValidList, yValidList, transform=transform, withFFT=withFFT)
 			#dataset = DrivingDataset_pytorch(xTrainList, yTrainList)
 
@@ -864,6 +895,10 @@ def train_dnn_multi(imageDir_list, labelPath_list, outputPath, netType, flags, s
 					data_number += inputs_seq.shape[0]*inputs_seq.shape[1]
 				else:
 					# inputs = np.transpose(inputs, (0, 3, 1, 2))
+                    if Maxup_flag:
+                        m=4
+                        inputs = inputs.reshape(inputs.shape[0]*m, int(inputs.shape[1]/m), inputs.shape[2], inputs.shape[3])
+                        
 					outputs,_ = net(torch.Tensor(inputs).cuda(non_blocking=True))
 					data_number += inputs.shape[0]
 
@@ -871,11 +906,16 @@ def train_dnn_multi(imageDir_list, labelPath_list, outputPath, netType, flags, s
 
 				# backward + optimize
 				labels = labels.numpy()
-				if Maxup_flag and epoch >= 5:
+				if Maxup_flag:# and epoch >= 5:
 					m=4
-					prediction = outputs.cpu().detach().numpy().flatten().reshape((int(batchSize/m), m))
-					labels = labels.reshape((int(batchSize/m), m))
+                    # old version
+                    # prediction = outputs.cpu().detach().numpy().flatten().reshape((int(batchSize/m), m))
+                    # labels = labels.reshape((int(batchSize/m), m))
 
+                    # new version
+                    prediction = outputs.cpu().detach().numpy().flatten().reshape(batchSize, m)
+                    labels = labels.flatten().repeat(m).reshape(batchSize, m)
+                    
 					error = np.abs(prediction - labels)
 
 					max_ids = np.argmax(error, axis=1)
